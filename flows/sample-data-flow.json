@@ -1,0 +1,64 @@
+{
+  "data_flows": [
+    {
+      "sequence": 1,
+      "source": {
+        "type": "file",
+        "format": "csv",
+        "path": "/path/to/source/data.csv",
+        "options": {
+          "inferSchema": "true",
+          "header": "true"
+        }
+      },
+      "transformations": [
+        {
+          "sql": "SELECT *, UPPER(name) AS name_uppercase FROM __THIS__"
+        }
+      ],
+      "sink": {
+        "type": "database",
+        "format": "jdbc",
+        "url": "jdbc:postgresql://localhost:5432/mydatabase",
+        "table": "my_table",
+        "options": {
+          "user": "dbuser",
+          "password": "dbpassword"
+        }
+      },
+      "mapping": {
+        "source_columns": ["id", "name", "age"],
+        "sink_columns": ["user_id", "name_uppercase", "age"]
+      },
+      "dependency": null
+    },
+    {
+      "sequence": 2,
+      "source": {
+        "type": "database",
+        "format": "jdbc",
+        "url": "jdbc:postgresql://localhost:5432/mydatabase",
+        "table": "another_table",
+        "options": {
+          "user": "dbuser",
+          "password": "dbpassword"
+        }
+      },
+      "transformations": [
+        {
+          "sql": "SELECT id, CONCAT(first_name, ' ', last_name) AS full_name FROM __THIS__"
+        }
+      ],
+      "sink": {
+        "type": "file",
+        "format": "parquet",
+        "path": "/path/to/sink/data.parquet"
+      },
+      "mapping": {
+        "source_columns": ["id", "first_name", "last_name"],
+        "sink_columns": ["id", "full_name"]
+      },
+      "dependency": 1
+    }
+  ]
+}
