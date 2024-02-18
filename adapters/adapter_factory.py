@@ -1,7 +1,7 @@
 # adapter_factory.py
 
-from file_adapter import FileSourceAdapter, FileSinkAdapter
-from db_adapter import DatabaseSourceAdapter, DatabaseSinkAdapter
+from adapters.file_adapter import FileSourceAdapter, FileSinkAdapter
+from adapters.db_adapter import DatabaseSourceAdapter, DatabaseSinkAdapter
 
 def get_adapter(adapter_type, io_type):
     if io_type == "source":
@@ -18,3 +18,8 @@ def get_adapter(adapter_type, io_type):
         # Add more sink types as needed
     else:
         raise ValueError("Invalid IO type specified.")
+
+
+# Example usage
+if __name__ == "__main__":
+    get_adapter("file", "source")

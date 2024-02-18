@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 from config.config_loader import  ETLConfigLoader
 from adapters.adapter_factory import get_adapter
+from adapters.file_adapter import FileSourceAdapter, FileSinkAdapter
 from config.spark_session import SparkSessionSingleton
 import logging
 
@@ -41,13 +42,14 @@ def run_data_flow_entry(spark, entry):
         df = source_adapter.read(spark, source_config)
         if df is None:
             raise ValueError("Failed to read data from source")
+        df.show()
 
         # Apply transformations
         if transformations:
             df = apply_transformations(df, transformations, spark)
             if df is None:
                 raise ValueError("Failed to apply transformations")
-
+            df.show()
         # Write data
         sink_adapter.write(df, sink_config)
 
@@ -65,11 +67,12 @@ def run_etl(config_path, spark):
     try:
         config_loader = ETLConfigLoader(config_path)
         data_flows = config_loader.get_data_flows()
-
+        print(data_flows)
         # Sort data flows by sequence number
         sorted_data_flows = sorted(data_flows, key=lambda x: x.get("sequence", 0))
 
         for entry in sorted_data_flows:
+            print("Entry => "+str(entry))
             dependency = entry.get("dependency")
 
             # Check if dependency is met
@@ -86,5 +89,5 @@ def run_etl(config_path, spark):
 
 if __name__ == "__main__":
     spark = SparkSessionSingleton.get_instance()
-    config_path = "path/to/your/config.json"
+    config_path = "./flows/sample-data-flow.json"
     run_etl(config_path, spark)

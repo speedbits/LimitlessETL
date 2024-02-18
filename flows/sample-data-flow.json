@@ -5,7 +5,7 @@
       "source": {
         "type": "file",
         "format": "csv",
-        "path": "/path/to/source/data.csv",
+        "path": "./data/cars_data.csv",
         "options": {
           "inferSchema": "true",
           "header": "true"
@@ -13,22 +13,22 @@
       },
       "transformations": [
         {
-          "sql": "SELECT *, UPPER(name) AS name_uppercase FROM __THIS__"
+          "sql": "SELECT *, UPPER(make) AS UMake FROM __THIS__"
         }
       ],
       "sink": {
         "type": "database",
         "format": "jdbc",
-        "url": "jdbc:postgresql://localhost:5432/mydatabase",
-        "table": "my_table",
+        "url": "jdbc:mysql://localhost:3306/limitlessdb",
+        "table": "cars",
         "options": {
-          "user": "dbuser",
-          "password": "dbpassword"
+          "user": "root",
+          "password": "root"
         }
       },
       "mapping": {
-        "source_columns": ["id", "name", "age"],
-        "sink_columns": ["user_id", "name_uppercase", "age"]
+        "source_columns": ["Make", "Model", "Color", "Mileage", "Price", "Year", "UMake"],
+        "sink_columns": ["Make", "Model", "Color", "Mileage", "Price", "Year", "UpperMake"]
       },
       "dependency": null
     },
@@ -37,26 +37,26 @@
       "source": {
         "type": "database",
         "format": "jdbc",
-        "url": "jdbc:postgresql://localhost:5432/mydatabase",
-        "table": "another_table",
+        "url": "jdbc:mysql://localhost:3306/limitlessdb",
+        "table": "cars",
         "options": {
-          "user": "dbuser",
-          "password": "dbpassword"
+          "user": "root",
+          "password": "root"
         }
       },
       "transformations": [
         {
-          "sql": "SELECT id, CONCAT(first_name, ' ', last_name) AS full_name FROM __THIS__"
+          "sql": "SELECT Make, Model, Color, Mileage, Price, Year, LOWER(UMake) AS lowerMake FROM __THIS__"
         }
       ],
       "sink": {
         "type": "file",
         "format": "parquet",
-        "path": "/path/to/sink/data.parquet"
+        "path": "./output/cars_data.parquet"
       },
       "mapping": {
-        "source_columns": ["id", "first_name", "last_name"],
-        "sink_columns": ["id", "full_name"]
+        "source_columns": ["Make", "Model", "Color", "Mileage", "Price", "Year", "LowerMake"],
+        "sink_columns": ["Make", "Model", "Color", "Mileage", "Price", "Year", "LMake"]
       },
       "dependency": 1
     }

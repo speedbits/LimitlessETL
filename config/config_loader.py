@@ -16,6 +16,8 @@ import json
 # This class simplifies the process of working with the JSON configuration, abstracting away file handling
 # and parsing logic. It allows the rest of your ETL framework to focus on processing data flows rather
 # than dealing with configuration loading intricacies.
+import os
+
 
 class ETLConfigLoader:
     def __init__(self, filepath):
@@ -27,6 +29,8 @@ class ETLConfigLoader:
         """
         Loads the JSON configuration from the specified file.
         """
+        file_dir = os.path.dirname(os.path.realpath('__file__'))
+        print("file_dir => "+file_dir)
         try:
             with open(self.filepath, 'r') as file:
                 config = json.load(file)
@@ -56,8 +60,12 @@ class ETLConfigLoader:
 
 # Example usage
 if __name__ == "__main__":
-    config_loader = ETLConfigLoader("path/to/your/config.json")
+    # Currently relative file path does not work (e.g ./flows/sample-data-flow.json)
+    config_loader = ETLConfigLoader("D:\\projects\LimitlessETL\\flows\\sample-data-flow.json")
+
     data_flows = config_loader.get_data_flows()
+    if data_flows:
+        print("Number of flows: "+str(len((data_flows))))
 
     # Access a specific data flow by sequence number
     data_flow = config_loader.get_data_flow_by_sequence(1)
