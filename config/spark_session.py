@@ -1,3 +1,5 @@
+import configparser
+
 from pyspark.sql import SparkSession
 
 # Key Points:
@@ -28,11 +30,17 @@ class SparkSessionSingleton:
     @classmethod
     def get_instance(cls):
         """Method to get the single instance of the Spark session."""
+        """
+        Can add additional configuration like below as appropriate
+            .config("spark.executor.memory", "2g") 
+            .config("spark.driver.memory", "2g") 
+        """
+        jars_folder = "D:/projects/LimitlessETL/jars" # config['DEFAULT']['jars_folder']
         if cls._instance is None:
             cls._instance = SparkSession.builder \
                 .appName("ETL Framework") \
                 .config("spark.some.config.option", "some-value") \
-                .config("spark.jars", "./jars/mysql-connector-j-8.3.0.jar") \
+                .config("spark.jars", f"../jars/mysql-connector-j-8.3.0.jar") \
                 .getOrCreate()
             print("New Spark session created.")
         else:

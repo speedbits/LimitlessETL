@@ -1,7 +1,6 @@
 # db_adapter.py
-
 from adapters.base_adapter import SourceAdapter, SinkAdapter
-from pyspark.sql import DataFrameWriter
+from pyspark.sql import DataFrameWriter, SparkSession
 
 
 class DatabaseSourceAdapter(SourceAdapter):
@@ -29,3 +28,12 @@ class DatabaseSinkAdapter(SinkAdapter):
             .option("dbtable", config['table']) \
             .option("driver", "com.mysql.cj.jdbc.Driver") \
             .save()
+
+    # TODO: make sure the timestamp column and SQL itself is externalized
+    def get_latest_timestamp(self, spark: SparkSession, config: dict) -> str:
+        query = f"(SELECT MAX(timestamp) as max_timestamp FROM {self.table_name}) as subquery"
+
+        df = spark.read.format("jdbc").option("url", self.jdbc_url).option("dbtable", query).option("driver",
+                                                                                                    "com.mysql.cj.jdbc.Driver").load()
+        latest_timestamp = df.collect()[0][0]
+        return latest_timestamp

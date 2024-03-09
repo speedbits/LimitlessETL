@@ -89,5 +89,5 @@ def run_etl(config_path, spark):
 
 if __name__ == "__main__":
     spark = SparkSessionSingleton.get_instance()
-    config_path = "./flows/sample-data-flow.json"
+    config_path = "resources/flows/sample-data-flow.json"
     run_etl(config_path, spark)

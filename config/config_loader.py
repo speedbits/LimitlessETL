@@ -61,7 +61,7 @@ class ETLConfigLoader:
 # Example usage
 if __name__ == "__main__":
     # Currently relative file path does not work (e.g ./flows/sample-data-flow.json)
-    config_loader = ETLConfigLoader("D:\\projects\LimitlessETL\\flows\\sample-data-flow.json")
+    config_loader = ETLConfigLoader("/resources/flows\\sample-data-flow.json")
 
     data_flows = config_loader.get_data_flows()
     if data_flows:
