@@ -17,7 +17,7 @@
           "sql": "select *, 'AKSHAY_MEDIA' as Publication FROM __THIS__"
         },
         {
-          "sql": "select ISBN, `Book-Title`, `Book-Author`, `Year-Of-Publication`, `Image-URL-S`, `Image-URL-M`, `Image-URL-L`, Publication as Publisher FROM __THIS__"
+          "sql": "select ISBN, `Book-Title` as  Book_Title, `Book-Author` as Book_Author, `Year-Of-Publication` as Year_Of_Publication, `Image-URL-S` as Image_URL_S, `Image-URL-M` as Image_URL_M, `Image-URL-L` as Image_URL_L, Publication as Publisher FROM __THIS__"
         }
       ],
       "sink": {
@@ -55,8 +55,10 @@
         "mode": "append",
         "options": {
           "user": "hanoomac_dataeng",
-          "password": "LetsD0C0nnect"
-        }
+          "password": "LetsD0C0nnect",
+          "fetchSize": "1000"
+        },
+        "partition_count": 4
       },
       "mapping": {
         "source_columns": ["ISBN", "Book-Title", "Book-Author", "Year-Of-Publication", "Publication", "Image-URL-S", "Image-URL-M", "Image-URL-L"],

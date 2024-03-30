@@ -45,6 +45,8 @@ def run_data_flow_entry(spark, entry):
             raise ValueError("Failed to read data from source")
         df.show()
 
+        print("Number of partitions after reading from source => "+str(df.rdd.getNumPartitions()))
+
         # Apply transformations
         if transformations:
             print("Applying transformations on the extracted data from source...")
@@ -52,8 +54,13 @@ def run_data_flow_entry(spark, entry):
             if df is None:
                 raise ValueError("Failed to apply transformations")
             df.show()
+        print("Number of partitions after transformation => " + str(df.rdd.getNumPartitions()))
         # Write data
         print("Writing data to sink...")
+        print("sink_config[partition_count] => "+str(sink_config.get("partition_count")))
+        if sink_config.get("partition_count") is not None:
+            df = df.repartition(sink_config.get("partition_count"))
+        print("Number of partitions before writing to sink  => " + str(df.rdd.getNumPartitions()))
         sink_adapter.write(df, sink_config)
 
         logger.info(f"Data flow {entry.get('sequence')} completed successfully.")
