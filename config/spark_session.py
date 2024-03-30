@@ -41,7 +41,9 @@ class SparkSessionSingleton:
                 .appName("ETL Framework") \
                 .config("spark.some.config.option", "some-value") \
                 .config("spark.jars", f"./jars/mysql-connector-j-8.3.0.jar") \
-                .getOrCreate()
+                .config("spark.executor.memory", "2g") \
+                .config("spark.driver.memory", "2g") \
+            .getOrCreate()
             print("New Spark session created.")
         else:
             print("Using existing Spark session.")

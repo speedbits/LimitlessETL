@@ -55,8 +55,7 @@
         "mode": "append",
         "options": {
           "user": "hanoomac_dataeng",
-          "password": "LetsD0C0nnect",
-          "fetchSize": "1000"
+          "password": "LetsD0C0nnect"
         },
         "partition_count": 4
       },
