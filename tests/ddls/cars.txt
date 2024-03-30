@@ -1,0 +1,9 @@
+CREATE TABLE `cars` (
+  `Make` text,
+  `Model` text,
+  `Color` text,
+  `Mileage` int(11) DEFAULT NULL,
+  `Price` int(11) DEFAULT NULL,
+  `Year` int(11) DEFAULT NULL,
+  `UMake` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
