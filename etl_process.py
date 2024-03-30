@@ -39,6 +39,7 @@ def run_data_flow_entry(spark, entry):
         sink_adapter = get_adapter(sink_config['type'], "sink")
 
         # Read data
+        print("Reading data from source...")
         df = source_adapter.read(spark, source_config)
         if df is None:
             raise ValueError("Failed to read data from source")
@@ -46,11 +47,13 @@ def run_data_flow_entry(spark, entry):
 
         # Apply transformations
         if transformations:
+            print("Applying transformations on the extracted data from source...")
             df = apply_transformations(df, transformations, spark)
             if df is None:
                 raise ValueError("Failed to apply transformations")
             df.show()
         # Write data
+        print("Writing data to sink...")
         sink_adapter.write(df, sink_config)
 
         logger.info(f"Data flow {entry.get('sequence')} completed successfully.")
@@ -70,19 +73,33 @@ def run_etl(config_path, spark):
         print(data_flows)
         # Sort data flows by sequence number
         sorted_data_flows = sorted(data_flows, key=lambda x: x.get("sequence", 0))
+        dependency_job_status_map = {}
 
         for entry in sorted_data_flows:
             print("Entry => "+str(entry))
             dependency = entry.get("dependency")
-
-            # Check if dependency is met
-            if dependency is not None and not run_data_flow_entry(spark,
-                                                                  config_loader.get_data_flow_by_sequence(dependency)):
-                logger.info(f"Skipping data flow {entry.get('sequence')} due to unmet dependency.")
-                continue
+            print("dependency => "+str(dependency))
+            print(" dependency_job_status_map => "+str(dependency_job_status_map))
+            # Check if dependency is met and then run
+            if dependency is None:
+                print("No dependency found, running the sequence => "+str(entry.get("sequence")))
+                status = run_data_flow_entry(spark, entry)
+                print("Status of sequence -> "+str(status))
+                dependency_job_status_map[entry.get("sequence")] = status
+            elif dependency is not None and dependency_job_status_map[dependency]:
+                status = run_data_flow_entry(spark, entry)
+                print("Status of sequence with dependency -> " + str(status))
+                dependency_job_status_map[entry.get("sequence")] = status
+            else:
+                print("Dependency found, and seems like the dependent sequence failed to run successfully. Aborting sequence => "+str(entry.get("sequence")))
+            # if dependency is not None and not run_data_flow_entry(spark,
+            #                                                       config_loader.get_data_flow_by_sequence(dependency)):
+            #     logger.info(f"Skipping data flow {entry.get('sequence')} due to unmet dependency.")
+            #     continue
 
             # Execute the data flow
-            run_data_flow_entry(spark, entry)
+            #print("run_data_flow_entry for sequence => " + str(entry))
+            #run_data_flow_entry(spark, entry)
     except Exception as e:
         logger.error(f"ETL process failed: {e}")
 

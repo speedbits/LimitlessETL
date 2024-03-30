@@ -1,0 +1,68 @@
+{
+  "data_flows": [
+    {
+      "sequence": 1,
+      "source": {
+        "type": "database",
+        "format": "jdbc",
+        "url": "jdbc:mysql://txpro1.fcomet.com:3306/hanoomac_dataeng",
+        "table": "BOOKS",
+        "options": {
+          "user": "hanoomac_dataeng",
+          "password": "LetsD0C0nnect"
+        }
+      },
+      "transformations": [
+        {
+          "sql": "select *, 'AKSHAY_MEDIA' as Publication FROM __THIS__"
+        },
+        {
+          "sql": "select ISBN, `Book-Title`, `Book-Author`, `Year-Of-Publication`, `Image-URL-S`, `Image-URL-M`, `Image-URL-L`, Publication as Publisher FROM __THIS__"
+        }
+      ],
+      "sink": {
+        "type": "file",
+        "format": "csv",
+        "path": "./output/BOOKS.csv",
+        "mode": "overwrite",
+        "options": {
+          "header": "true"
+        }
+
+      },
+      "mapping": {
+        "source_columns": ["ISBN", "Book-Title", "Book-Author", "Year-Of-Publication", "Publication", "Image-URL-S", "Image-URL-M", "Image-URL-L"],
+        "sink_columns": ["ISBN", "Book-Title", "Book-Author", "Year-Of-Publication", "Publisher", "Image-URL-S", "Image-URL-M", "Image-URL-L"]
+      },
+      "dependency": null
+    },
+    {
+      "sequence": 2,
+      "source": {
+        "type": "file",
+        "format": "csv",
+        "path": "./output/BOOKS.csv",
+        "options": {
+          "inferSchema": "true",
+          "header": "true"
+        }
+      },
+      "sink": {
+        "type": "database",
+        "format": "jdbc",
+        "url": "jdbc:mysql://txpro1.fcomet.com:3306/hanoomac_dataeng",
+        "table": "BOOKS_TRANSFORMED",
+        "mode": "append",
+        "options": {
+          "user": "hanoomac_dataeng",
+          "password": "LetsD0C0nnect"
+        }
+      },
+      "mapping": {
+        "source_columns": ["ISBN", "Book-Title", "Book-Author", "Year-Of-Publication", "Publication", "Image-URL-S", "Image-URL-M", "Image-URL-L"],
+        "sink_columns": ["ISBN", "Book_Title", "Book_Author", "Year_Of_Publication", "Publisher", "Image_URL_S", "Image_URL_M", "Image_URL_L"]
+      },
+      "dependency": 1
+    }
+  ]
+}

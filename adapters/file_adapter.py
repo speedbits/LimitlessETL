@@ -19,4 +19,12 @@ class FileSourceAdapter(SourceAdapter):
 
 class FileSinkAdapter(SinkAdapter):
     def write(self, df, config):
-        df.write.format(config['format']).save(config['path'])
+        df_writer = df.write
+        df_writer.format(config['format'])
+        for option, value in config['options'].items():
+            print("write : " + option + " => " + value)
+            df_writer = df_writer.option(option, value)
+        print(" config mode => " + str(config['mode']))
+        if config['mode'] is not None:
+            df_writer.mode(config['mode'])
+        df_writer.save(config['path'])

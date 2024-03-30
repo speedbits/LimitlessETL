@@ -22,8 +22,9 @@ class DatabaseSinkAdapter(SinkAdapter):
         for option, value in config['options'].items():
             print(option + " => " + value)
             df_writer = df_writer.option(option, value)
+        if config['mode'] is not None:
+            df_writer.mode(config['mode'])
         df.writer = df_writer \
-            .mode("overwrite") \
             .option("url", config['url']) \
             .option("dbtable", config['table']) \
             .option("driver", "com.mysql.cj.jdbc.Driver") \
