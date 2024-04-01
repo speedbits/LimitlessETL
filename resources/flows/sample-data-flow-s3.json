@@ -1,0 +1,36 @@
+{
+  "data_flows": [
+    {
+      "sequence": 1,
+      "source": {
+        "type": "file",
+        "format": "csv",
+        "path": "./data/books.csv",
+        "options": {
+          "inferSchema": "true",
+          "header": "true"
+        }
+      },
+      "transformations": [
+
+      ],
+      "sink": {
+        "type": "s3",
+        "format": "csv",
+        "bucket": "jdbc:mysql://txpro1.fcomet.com:3306/hanoomac_dataeng?useServerPrepStmts=false&rewriteBatchedStatements=true",
+        "folder": "BOOKS_TRANSFORMED",
+        "file": "BOOKS_TRANSFORMED",
+        "local_tmp_folder": "",
+        "mode": "overwrite",
+        "access_id": "",
+        "access_secret": "",
+        "partition_count": 4
+      },
+      "mapping": {
+        "source_columns": ["Make", "Model", "Color", "Mileage", "Price", "Year", "UMake"],
+        "sink_columns": ["Make", "Model", "Color", "Mileage", "Price", "Year", "UpperMake"]
+      },
+      "dependency": null
+    }
+  ]
+}
