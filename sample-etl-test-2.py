@@ -8,5 +8,5 @@ from etl_process import run_etl
 
 if __name__ == "__main__":
     spark = SparkSessionSingleton.get_instance()
-    config_path = "resources/flows/sample-data-flow-2.json"
+    config_path = "resources/flows/sample-data-flow-s3.json"
     run_etl(config_path, spark)
